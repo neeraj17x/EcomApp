@@ -13,6 +13,7 @@ public interface ProductRepo extends JpaRepository<Product, Integer> {
 
 	List<Product> findByCategory(String category);
 	
+	//some are not working
 	//@Query(value = "SELECT * FROM product p WHERE p.name = ?1", nativeQuery = true)
 	//@Query(value = "SELECT * FROM product p WHERE p.name = :keyword", nativeQuery = true)
 	//@Query("SELECT p FROM Product p WHERE p.name LIKE CONCAT('%', :keyword, '%')")
