@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -22,6 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.model.Product;
 import com.example.demo.service.ProductService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/api")
@@ -30,8 +35,15 @@ public class ProductController {
 	private ProductService productService;
 
 	@GetMapping("/")
-	public String hello() {
-		return "Welcome Admin ! ...";
+	public String hello(HttpServletRequest request) {
+		String message = "Welcome Admin ! ...";
+		HttpSession sessionInfo = request.getSession();
+		//System.out.println(sessionInfo);
+		//String sessionMessage = sessionInfo.toString();
+		//List<String> attributeStrings = sessionInfo.getAttributeNames();
+		//System.out.println(sessionInfo.getAttributeNames().toString());
+		message += " " + sessionInfo.getId();
+		return message;
 	}
 	
 	@GetMapping("products")
@@ -47,6 +59,13 @@ public class ProductController {
 	@GetMapping("product/{id}")
 	public ResponseEntity<Product> getProduct(@PathVariable Integer id) {
 		return productService.getProduct(id);
+	}
+	
+	// Add New Product
+	@PostMapping("product/add")
+	public ResponseEntity<?> addProductWithoutImage(@RequestBody Product product) {
+		Product productSaved = productService.addProductWithoutImage(product);
+		return new ResponseEntity<>(productSaved, HttpStatus.CREATED);
 	}
 	
 	// Add New Product
@@ -99,5 +118,12 @@ public class ProductController {
 		//System.out.println(keyword);
 		List<Product> products = productService.searchProductByKey(keyword);
 		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
+	}
+	
+	//Get CSRF Token for Save methods
+	@GetMapping("/csrf-token")
+	public CsrfToken getCsrfToken(HttpServletRequest request) {
+		CsrfToken token = (CsrfToken)request.getAttribute("_csrf");
+		return token;
 	}
 }

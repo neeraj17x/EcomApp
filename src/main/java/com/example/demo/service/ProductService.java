@@ -35,12 +35,19 @@ public class ProductService {
 		}
 		return new ResponseEntity<Product>(product, HttpStatus.OK);
 	}
+	
+	public Product addProductWithoutImage(Product product) {
+		// Save product info along with image info
+		return productRepo.save(product);
+	}
 
 	public Product addProduct(Product product, MultipartFile imageFile) throws IOException {
-		// Set Image info in product object
-		product.setImageName(imageFile.getOriginalFilename());
-		product.setImageType(imageFile.getContentType());
-		product.setImageData(imageFile.getBytes());
+		if(imageFile != null) {
+			// Set Image info in product object
+			product.setImageName(imageFile.getOriginalFilename());
+			product.setImageType(imageFile.getContentType());
+			product.setImageData(imageFile.getBytes());
+		}
 		// Save product info along with image info
 		return productRepo.save(product);
 	}
