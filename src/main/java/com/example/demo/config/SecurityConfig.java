@@ -12,7 +12,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -52,8 +53,22 @@ public class SecurityConfig {
 	@Bean
 	protected AuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-		provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+		//provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());		// Plain Text
+		provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
 		provider.setUserDetailsService(userDetailsService);
 		return provider;
 	}
+	
+	/*
+	 * The @Bean annotation in Spring is used to define a bean within a Spring ApplicationContext.
+	 * A bean in Spring is an object that is managed by the Spring container. 
+	 * The @Bean annotation indicates that the method it is attached to will create and configure an object that Spring will manage, and
+	 * the object will be available for dependency injection.
+	 */
+	
+	// Set Default Password encoder for all encryption methods
+	@Bean
+	protected PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
+    }
 }
