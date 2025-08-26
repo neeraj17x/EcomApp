@@ -35,7 +35,7 @@ public class DataLoader implements CommandLineRunner {
             adminUser.setIsAccountLocked(false);
             adminUser.setIsCredentialsExpired(false);
 
-            // Save the admin user to the database
+            // Save the admin user to the database >>
             userRepo.save(adminUser);
             System.out.println("Admin user created");
 		}
