@@ -33,4 +33,11 @@ public class UserController {
 		List<User> users = userService.getAllUsers();
 		return new ResponseEntity<List<User>>(users, HttpStatus.OK);
 	}
+	
+	@PostMapping("login")
+	public ResponseEntity<String> login(@RequestBody User user) {
+		//System.out.println(user);
+		String message = userService.verify(user);
+		return new ResponseEntity<>(message, HttpStatus.OK);
+	}
 }

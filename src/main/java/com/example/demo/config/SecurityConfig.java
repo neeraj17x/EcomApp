@@ -3,9 +3,11 @@ package com.example.demo.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -30,7 +32,10 @@ public class SecurityConfig {
 	protected SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception
 	{
 		httpSecurity.csrf(customizer -> customizer.disable());	//disable CSRF
-		httpSecurity.authorizeHttpRequests(request -> request.anyRequest().authenticated()); 	// enable authorization for all requests
+		//httpSecurity.authorizeHttpRequests(request -> request.anyRequest().authenticated()); 	// enable authorization for all requests
+		httpSecurity.authorizeHttpRequests(request -> request
+				.requestMatchers("users/register", "login", "users/login").permitAll()		// allow register and login request without authentication
+				.anyRequest().authenticated()); 	// enable authorization for all requests
 		httpSecurity.formLogin(Customizer.withDefaults());		// enable form login
 		httpSecurity.httpBasic(Customizer.withDefaults());		// enable login through REST API
 		httpSecurity.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -71,4 +76,9 @@ public class SecurityConfig {
 	protected PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
     }
+	
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+		return config.getAuthenticationManager();
+	}
 }
