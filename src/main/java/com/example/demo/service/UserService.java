@@ -19,14 +19,16 @@ public class UserService {
 	private UserRepo userRepo;
 	//private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);	// Not Recommended for Flexibility
 	private final PasswordEncoder encoder;
+	private JWTService jwtService;
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
 	
-	public UserService(UserRepo userRepo, PasswordEncoder encoder) {
+	public UserService(UserRepo userRepo, PasswordEncoder encoder, JWTService jwtService) {
 		//super();
 		this.userRepo = userRepo;
 		this.encoder = encoder;
+		this.jwtService = jwtService;
 	}
 
 	public User register(User user) {
@@ -41,7 +43,8 @@ public class UserService {
 	public String verify(User user) {
 		Authentication authentication =  authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 		if(authentication.isAuthenticated()) {
-			return "You are now logged in!";
+			//return "You are now logged in!";
+			return jwtService.generateToken(user.getUsername());
 		}
 		return null;
 	}
