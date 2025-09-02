@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,5 +34,14 @@ public class UserController {
 	public ResponseEntity<List<User>> users() {
 		List<User> users = userService.getAllUsers();
 		return new ResponseEntity<List<User>>(users, HttpStatus.OK);
+	}
+	
+	@PostMapping("login")
+	public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
+		//System.out.println(user);
+		String token = userService.verify(user);
+		Map<String, String> response = new HashMap<String, String>();
+		response.put("token", token);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }
