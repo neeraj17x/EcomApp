@@ -48,12 +48,15 @@ public class ProductController {
 	
 	@GetMapping("products")
 	public ResponseEntity<List<Product>> allProducts() {
-		return productService.getAllProducts("");
+		List<Product> products = productService.getAllProducts("");
+		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
 	}
 	
 	@GetMapping("product/category/{cat}")
 	public ResponseEntity<List<Product>> allProductByCategory(@PathVariable String cat) {
-		return productService.getAllProducts(cat);
+		List<Product> products = productService.getAllProducts(cat);
+		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
+		//return productService.getAllProducts(cat);
 	}
 	
 	@GetMapping("product/{id}")

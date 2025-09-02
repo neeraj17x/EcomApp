@@ -29,7 +29,6 @@ public class JWTService {
 			SecretKey secKey = keyGen.generateKey();
 			signatureKey = Base64.getEncoder().encodeToString(secKey.getEncoded());
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

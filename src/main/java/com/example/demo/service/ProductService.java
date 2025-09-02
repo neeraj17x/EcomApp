@@ -17,7 +17,7 @@ public class ProductService {
 	@Autowired
 	ProductRepo productRepo;
 	
-	public ResponseEntity<List<Product>> getAllProducts(String category) {
+	public List<Product> getAllProducts(String category) {
 		List<Product> products;
 		//products = productRepo.findAll();
 		if(category == "") {
@@ -25,7 +25,8 @@ public class ProductService {
 		} else {
 			products = productRepo.findByCategory(category);
 		}
-		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
+		return products;
+		//return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
 	}
 
 	public ResponseEntity<Product> getProduct(Integer id) {
