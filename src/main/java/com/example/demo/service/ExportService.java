@@ -34,13 +34,17 @@ public class ExportService {
 		Row headerRow = sheet.createRow(0);
 		CellStyle headerCellStyle = this.setHeaderStyle(workbook, headerRow);
 		//headerRow.setRowStyle(new XSSFCellStyle(null));
-		List<String> headers = List.of("Id", "Name", "Category", "Description", "Price", "Quantity");
+		List<String> headers = List.of("Id", "Product Name", "Product Code", "Category", "Description", "Price", "Quantity");
 		this.setProductsHeader(0, headerRow, headers, headerCellStyle);
         
         // Populate the data rows
         int rowNum = 1;
         rowNum = this.setProductsRows(rowNum, sheet, products);
-        
+        //sheet.autoSizeColumn(rowNum);
+        for (int i = 1; i < sheet.getRow(0).getLastCellNum(); i++) {
+            sheet.autoSizeColumn(i);
+        }
+
         // Write the output to a byte array
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         workbook.write(outputStream);
@@ -79,10 +83,12 @@ public class ExportService {
             Row row = sheet.createRow(rowNumber++);
             row.createCell(0).setCellValue(product.getId());
             row.createCell(1).setCellValue(product.getName());
-            row.createCell(2).setCellValue(product.getCategory());
-            row.createCell(3).setCellValue(product.getDescription());
-            row.createCell(4).setCellValue("\u20B9"+ product.getPrice().doubleValue());	// UNICODE for ₹
-            row.createCell(5).setCellValue(product.getQuantity());
+            row.createCell(2).setCellValue(product.getCode());
+            row.createCell(3).setCellValue(product.getCategory());
+            row.createCell(4).setCellValue(product.getDescription());
+            //row.createCell(5).setCellValue(product.getPrice().doubleValue());
+            row.createCell(5).setCellValue("\u20B9"+ product.getPrice());	// UNICODE for ₹
+            row.createCell(6).setCellValue(product.getQuantity());
         }
 		return rowNumber;
 	}

@@ -27,6 +27,8 @@ public class Product {
 	private Integer id;
 	@Column(nullable = false)
 	private String name;
+	@Column(nullable = false, unique = true)
+	private String code;
 	private String brand;
 	@Column(nullable = false)
 	private String category;
