@@ -30,23 +30,33 @@ public class JwtFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		String authHeader = request.getHeader("Authorization");
-		String token = null;
-		String username = null;
-		if(authHeader != null && authHeader.startsWith("Bearer ")) {
-			token = authHeader.substring(7);
-			username = jwtService.extractUsername(token);
-		}
-		
-		if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-			UserDetails userDetails = context.getBean(UserDetailsServiceImpl.class).loadUserByUsername(username);
-			if(jwtService.validateToken(token, userDetails)) {
-				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-				SecurityContextHolder.getContext().setAuthentication(authToken);
+		try {
+			String authHeader = request.getHeader("Authorization");
+			String token = null;
+			String username = null;
+			if(authHeader != null && authHeader.startsWith("Bearer ")) {
+				token = authHeader.substring(7);
+				username = jwtService.extractUsername(token);
 			}
-		}
-		filterChain.doFilter(request, response);
+			
+			if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+				UserDetails userDetails = context.getBean(UserDetailsServiceImpl.class).loadUserByUsername(username);
+				if(jwtService.validateToken(token, userDetails)) {
+					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+					authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+					SecurityContextHolder.getContext().setAuthentication(authToken);
+				}
+			}
+			// continue filter chain if everything is fine
+			filterChain.doFilter(request, response);
+		} catch (io.jsonwebtoken.JwtException | IllegalArgumentException e) {
+	        // ❌ Only JWT/authentication issues → 401
+	        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	        response.getWriter().write("Invalid or expired token.");
+	    } catch (Exception ex) {
+	    	response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	    	response.getWriter().write("Invalid or bad request.");
+	    }
 	}
 
 }
