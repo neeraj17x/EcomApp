@@ -129,4 +129,13 @@ public class ProductController {
 		CsrfToken token = (CsrfToken)request.getAttribute("_csrf");
 		return token;
 	}
+	
+	@PostMapping("/products/import")
+    public ResponseEntity<String> importProducts(@RequestParam MultipartFile file) {
+        if (!file.getOriginalFilename().endsWith(".xlsx")) {
+            return ResponseEntity.badRequest().body("Please upload an Excel file (.xlsx)");
+        }
+        productService.saveProductsFromExcel(file);
+        return ResponseEntity.ok("Products imported successfully!");
+    }
 }

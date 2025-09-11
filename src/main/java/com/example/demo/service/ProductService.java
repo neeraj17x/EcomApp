@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.model.Product;
 import com.example.demo.repo.ProductRepo;
+import com.example.demo.util.ExcelHelper;
 
 @Service
 public class ProductService {
@@ -77,5 +78,14 @@ public class ProductService {
 		return productRepo.searchProducts(keyword);
 		//return null;
 	}
+	
+	public void saveProductsFromExcel(MultipartFile file) {
+        try {
+            List<Product> products = ExcelHelper.excelToProducts(file.getInputStream());
+            productRepo.saveAll(products);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to store excel data: " + e.getMessage());
+        }
+    }
 
 }

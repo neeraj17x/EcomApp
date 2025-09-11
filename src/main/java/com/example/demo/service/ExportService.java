@@ -41,7 +41,7 @@ public class ExportService {
 		Row headerRow = sheet.createRow(0);
 		this.setHeaderStyle();
 		//headerRow.setRowStyle(new XSSFCellStyle(null));
-		List<String> headers = List.of("Id", "Product Name", "Product Code", "Category", "Description", "Price", "Quantity");
+		List<String> headers = List.of("Id", "Product Name", "Product Code", "Brand", "Category", "Description", "Price (\u20B9)", "Quantity");
 		this.setProductsHeader(0, headerRow, headers);
         
 		this.setRowStyle();
@@ -100,23 +100,43 @@ public class ExportService {
 	private int setProductsRows(int rowNumber, Sheet sheet, List<Product> products) {
 		for (Product product  : products) {
             Row row = sheet.createRow(rowNumber++);
-            Cell idCell = row.createCell(0);
+            int col = 0;
+            // Id
+            Cell idCell = row.createCell(col);
             idCell.setCellStyle(lockedCellStyle);
             idCell.setCellValue(product.getId());
-            Cell nameCell = row.createCell(1);
+            // Name
+            col++;
+            Cell nameCell = row.createCell(col);
             nameCell.setCellStyle(unlockedCellStyle);
             nameCell.setCellValue(product.getName());
-            Cell codeCell = row.createCell(2);
+            // Code
+            col++;
+            Cell codeCell = row.createCell(col);
             codeCell.setCellStyle(lockedCellStyle);
             codeCell.setCellValue(product.getCode());
-            Cell categoryCell = row.createCell(3);
+            // Brand
+            col++;
+            Cell brandCell = row.createCell(col);
+            brandCell.setCellStyle(unlockedCellStyle);
+            brandCell.setCellValue(product.getBrand());
+            // Category
+            col++;
+            Cell categoryCell = row.createCell(col);
             categoryCell.setCellValue(product.getCategory());
-            Cell descriptionCell = row.createCell(4);
+            // Description
+            col++;
+            Cell descriptionCell = row.createCell(col);
             descriptionCell.setCellValue(product.getDescription());
             //row.createCell(5).setCellValue(product.getPrice().doubleValue());
-            Cell priceCell = row.createCell(5);
-            priceCell.setCellValue("\u20B9"+ product.getPrice());	// UNICODE for ₹
-            Cell quantityCell = row.createCell(6);
+            // Price
+            col++;
+            Cell priceCell = row.createCell(col);
+            // priceCell.setCellValue("\u20B9"+ product.getPrice());	// UNICODE for ₹
+            priceCell.setCellValue(product.getPrice().doubleValue());
+            // Quantity
+            col++;
+            Cell quantityCell = row.createCell(col);
             quantityCell.setCellValue(product.getQuantity());
         }
 		return rowNumber;
