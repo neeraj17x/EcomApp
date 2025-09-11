@@ -55,7 +55,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	        response.getWriter().write("Invalid or expired token.");
 	    } catch (Exception ex) {
 	    	response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-	    	response.getWriter().write("Invalid or bad request.");
+	    	response.getWriter().write("Unexpected Error Occurred" + ex.getMessage());
 	    }
 	}
 
